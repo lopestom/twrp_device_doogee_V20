@@ -1,5 +1,5 @@
 # TWRP device tree for Doogee V20 - Dimensity 700 - MT6833 - A11
-[<img align="center" src="https://github.com/lopestom/twrp_device_doogee_V20/blob/android-11/.github/workflows/New2_twrp.yml/badge.svg?branch=android-11" />](https://github.com/lopestom/twrp_device_doogee_V20/blob/android-11/.github/workflows/New2_twrp.yml)
+[<img align="center" src="https://github.com/lopestom/twrp_device_doogee_V20/actions/workflows/New2_twrp.yml/badge.svg?branch=android-11" />](https://github.com/lopestom/twrp_device_doogee_V20/actions/workflows/New2_twrp.yml)
 
 
 This device tree have encrypt/decrypt mode activated for test because boot.img has 40MB. 
