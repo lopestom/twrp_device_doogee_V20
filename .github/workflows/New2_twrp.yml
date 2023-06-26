@@ -85,7 +85,7 @@ jobs:
        PATH=~/bin:$PATH
        cd twrp
        export ALLOW_MISSING_DEPENDENCIES=true && source build/envsetup.sh &&lunch twrp_V20-eng && mka $TARGET -j$(nproc --all)
-       cp  out/target/product/V20/boot.img    out/target/product/V20/boot-V20_A11.img
+       cp  out/target/product/V20/boot.img    out/target/product/V20/boot-TWRP_V20_A11.img
              
     - name: Release recovery image
       uses: softprops/action-gh-release@v1
