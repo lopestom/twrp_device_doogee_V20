@@ -10,17 +10,22 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 # Installs gsi keys into ramdisk, to boot a developer GSI with verified boot.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
 
-# Inherit some common twrp stuff.
-$(call inherit-product, vendor/twrp/config/common.mk)
+# Virtual A/B OTA
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
-# Inherit from V20 device
+# Inherit from star device
 $(call inherit-product, device/doogee/V20/device.mk)
 
+# Inherit some common recovery stuff.
+$(call inherit-product, vendor/twrp/config/common.mk)
+
+# Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := V20
 PRODUCT_NAME := twrp_V20
 PRODUCT_BRAND := DOOGEE
 PRODUCT_MODEL := V20
 PRODUCT_MANUFACTURER := DOOGEE
+PRODUCT_RELEASE_NAME := DOOGEE V20
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     TARGET_DEVICE=V20 \

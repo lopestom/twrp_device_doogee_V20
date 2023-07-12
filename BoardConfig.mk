@@ -1,16 +1,24 @@
 #
-# Copyright (C) 2023 The Android Open Source Project
-# Copyright (C) 2023 The TWRP Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
+# Copyright (C) 2020 The TWRP Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 DEVICE_PATH := device/doogee/V20
 
 # For building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
-
-# For building with aosp manifest
-BUILD_BROKEN_DUP_RULES := true
-BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 
 # Architecture
 TARGET_ARCH := arm64
@@ -21,33 +29,72 @@ TARGET_CPU_VARIANT := cortex-a55
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-2a
+#TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a55
 
-# Arch Suffix
 TARGET_BOARD_SUFFIX := _64
 TARGET_USES_64_BIT_BINDER := true
-TARGET_SUPPORTS_64_BIT_APPS := true
-TARGET_IS_64_BIT := true
-
-# Assert
-TARGET_OTA_ASSERT_DEVICE := V20
-
-# Bootloader
-#TARGET_BOOTLOADER_BOARD_NAME := k6833v1_64
-TARGET_BOOTLOADER_BOARD_NAME := DOOGEE
-TARGET_NO_BOOTLOADER := true
-TARGET_USES_UEFI := true
 
 # Platform
 TARGET_BOARD_PLATFORM := mt6833
 
-# MTK Hardware
-BOARD_USES_MTK_HARDWARE := true
+# Bootloader
+TARGET_BOOTLOADER_BOARD_NAME := DOOGEE
+TARGET_NO_BOOTLOADER := true
+
+# Assert
+TARGET_OTA_ASSERT_DEVICE := V20
+
+# A/B
+AB_OTA_UPDATER := true
+TW_INCLUDE_REPACKTOOLS := true
+
+AB_OTA_PARTITIONS += \
+    boot \
+    dtbo \
+    lk \
+    preloader \
+    odm \
+    product \
+    system \
+    vbmeta \
+    vbmeta_vendor \
+    vbmeta_system \
+    vendor \
+    vendor_boot
+
+# File systems and partitions
+BOARD_HAS_LARGE_FILESYSTEM := true
+BOARD_BOOTIMAGE_PARTITION_SIZE := 0x2800000
+#BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
+#BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x74171000
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+#BOARD_USERDATAIMAGE_PARTITION_SIZE := 0x39C67F8000
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
+#BOARD_VENDORIMAGE_PARTITION_SIZE := 0x242D2000
+
+# Workaround for error copying files to recovery ramdisk
+TARGET_COPY_OUT_VENDOR := vendor
+
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+
+# Dynamic Partition
+BOARD_SUPER_PARTITION_SIZE := 6442450944
+BOARD_SUPER_PARTITION_GROUPS := main
+BOARD_MAIN_SIZE := 6438256640 # (BOARD_SUPER_PARTITION_SIZE - 4MB)
+BOARD_MAIN_PARTITION_LIST := product vendor system odm
+
+
+# System as root
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+BOARD_SUPPRESS_SECURE_ERASE := true
 
 # Kernel
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 buildvariant=user
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2
 BOARD_KERNEL_CMDLINE += androidboot.force_normal_boot=1
 BOARD_KERNEL_OFFSET := 0x00008000
 BOARD_KERNEL_BASE := 0x40078000
@@ -57,15 +104,15 @@ BOARD_KERNEL_TAGS_OFFSET := 0x07c08000
 BOARD_DTB_OFFSET := 0x07c08000
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_IMAGE_NAME := Image.gz
+TARGET_KERNEL_ARCH := arm64
+TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image.gz
 TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
 BOARD_HASH_TYPE := sha1
 BOARD_BOOTIMG_HEADER_VERSION := 2
+#BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
+#BOARD_INCLUDE_RECOVERY_DTBO := true
 BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
-
-TARGET_KERNEL_ARCH := arm64
-TARGET_KERNEL_HEADER_ARCH := arm64
-
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --kernel_offset $(BOARD_KERNEL_OFFSET)
@@ -76,105 +123,83 @@ BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
 BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE) --board ""
 BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
 
-# File systems and partitions
-BOARD_HAS_LARGE_FILESYSTEM := true
-BOARD_BOOTIMAGE_PARTITION_SIZE := 0x2800000 # 41943040
-BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
-BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_USE_F2FS := true
+# Hack to get keymaster to recognize the key files
+#PLATFORM_SECURITY_PATCH := 2099-12-31
+#PLATFORM_VERSION := 20.1.0
+#VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 
-TARGET_COPY_OUT_VENDOR := vendor
+PLATFORM_SECURITY_PATCH := 2023-06-05
+PLATFORM_VERSION := 11
+VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 
-# Dynamic Partition
-BOARD_SUPER_PARTITION_SIZE := 9126805504
-BOARD_SUPER_PARTITION_GROUPS := doogee_dynamic_partitions
-BOARD_DOOGEE_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor product odm
-BOARD_DOOGEE_DYNAMIC_PARTITIONS_SIZE := 9122611200
+# Charger
+BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
 BOARD_ROOT_EXTRA_FOLDERS += metadata
 
-# Display
-TARGET_SCREEN_DENSITY := 480
+# Crypto
+#TW_INCLUDE_CRYPTO := true
+#TW_INCLUDE_CRYPTO_FBE := true
+#TW_INCLUDE_FBE := true
+#TW_INCLUDE_FBE_METADATA_DECRYPT := true
+#TW_USE_FSCRYPT_POLICY := 1
+
+#TW_CRYPTO_FS_TYPE := "f2fs"
+#TW_CRYPTO_REAL_BLKDEV := "/dev/block/by-name/userdata"
+#TW_CRYPTO_MNT_POINT := "/data"
+##TW_CRYPTO_FS_OPTIONS := "nosuid,nodev,noatime,discard,noauto_da_alloc,data=ordered"
+#TW_CRYPTO_FS_OPTIONS := "rw,seclabel,nosuid,nodev,noatime,noauto_da_alloc,inlinecrypt,resgid=1065,errors=panic,data=ordered"
+
+# Additional binaries & libraries needed for recovery
+#TARGET_RECOVERY_DEVICE_MODULES += \
+#    libkeymaster4 \
+#    libpuresoftkeymasterdevice
+
+#TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += \
+#    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster4.so \
+#    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
+
+# Properties
+TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 
 # Recovery
-TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
-RECOVERY_SDCARD_ON_DATA := true
 BOARD_USES_RECOVERY_AS_BOOT := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_NO_RECOVERY := true
 TW_HAS_NO_RECOVERY_PARTITION := true
-
-# Properties
-TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
-TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
-
-# System as Root
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
-BOARD_SUPPRESS_SECURE_ERASE := true
-
-# Verified Boot
-BOARD_AVB_ENABLE := true
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
-
-BOARD_AVB_VBMETA_SYSTEM := system product
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
-
-BOARD_AVB_VBMETA_VENDOR := vendor
-BOARD_AVB_VBMETA_VENDOR_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_VENDOR_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION := 2
-
-BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
-BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
-
-#A11 DECRYPTION
-BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
-    --prop com.android.build.boot.os_version:$(PLATFORM_VERSION) \
-    --prop com.android.build.boot.security_patch:$(PLATFORM_SECURITY_PATCH)
-
-# Hack: prevent anti rollback
-# Security patch level
-PLATFORM_SECURITY_PATCH := 2127-12-31
-VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
-PLATFORM_VERSION := 99.87.36
-PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
-BOOT_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+BOARD_CHARGER_DISABLE_INIT_BLANK := true
 
 # TWRP Configuration
-TW_DEFAULT_LANGUAGE := ru
-TW_EXTRA_LANGUAGES := false
-TW_SCREEN_BLANK_ON_BOOT := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_USE_TOOLBOX := true
-TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
-TW_DEVICE_VERSION := DOOGEE V20_20230530 - lopestom
-TARGET_USES_MKE2FS := true
-TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.usb0/lun.%d/file
-TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
-
-TW_INCLUDE_REPACKTOOLS := true
-TW_INCLUDE_FASTBOOTD := true
-TW_INCLUDE_RESETPROP := true
-TW_INCLUDE_LIBRESETPROP := true
-
+TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6833.rc
 TW_EXCLUDE_DEFAULT_USB_INIT := true
-TW_EXCLUDE_APEX := true
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
+#TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone4/temp
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
+TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
+#BOARD_USE_CUSTOM_RECOVERY_FONT := "roboto_15x24.h"
+TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 100
+#TW_SCREEN_BLANK_ON_BOOT := true
+TW_INPUT_BLACKLIST := "hbtp_vm"
+TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
+
+TW_INCLUDE_NTFS_3G := true
+TW_USE_TOOLBOX := true
+TW_EXTRA_LANGUAGES := false
+TW_DEFAULT_LANGUAGE := ru
+TW_NO_SCREEN_BLANK := true
+TW_NO_BATT_PERCENT := false
 TW_EXCLUDE_TWRPAPP := true
 
-# Debug
-TWRP_INCLUDE_LOGCAT := true
-TARGET_USES_LOGD := true
+TARGET_DISABLE_TRIPLE_BUFFERING := false
+
+TW_EXCLUDE_APEX := true
+TW_INCLUDE_RESETPROP := true
+TARGET_USES_MKE2FS := true
 
 # Resolution
 TW_THEME := portrait_hdpi
@@ -187,32 +212,46 @@ TW_STATUS_ICONS_ALIGN := center
 TW_CUSTOM_CLOCK_POS := 610
 #TW_CUSTOM_BATTERY_POS := 800
 
-# Device brightness path and level
-TW_MAX_BRIGHTNESS := 255
-TW_DEFAULT_BRIGHTNESS := 130
-TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
-TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 
-# Crypto
-TW_INCLUDE_CRYPTO := true
-TW_INCLUDE_CRYPTO_FBE := true
-TW_INCLUDE_FBE_METADATA_DECRYPT := true
-
-# fscrypt policy FBEv2
-TW_USE_FSCRYPT_POLICY := 2
-TW_PREPARE_DATA_MEDIA_EARLY := true
-
-# Charger
-BOARD_CHARGER_ENABLE_SUSPEND := true
-BOARD_CHARGER_DISABLE_INIT_BLANK := true
-TARGET_DISABLE_TRIPLE_BUFFERING := false
+# Debug
+TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD := true
 
 # Storage
+RECOVERY_SDCARD_ON_DATA := true
+TW_HAS_MTP := true
 TW_NO_USB_STORAGE := false
 TW_INTERNAL_STORAGE_PATH := "/data/media/0"
 TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
 TW_EXTERNAL_STORAGE_PATH := "/external_sd"
 TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
-TW_HAS_MTP := true
 TW_MTP_DEVICE := /dev/mtp_usb
 TW_DEFAULT_EXTERNAL_STORAGE := true
+TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.usb0/lun.%d/file
+
+# AVB - Android Verified Boot
+BOARD_AVB_ENABLE := true
+
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS := --set_hashtree_disabled_flag
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS := --flags 2
+
+BOARD_AVB_VBMETA_SYSTEM := system product
+BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
+
+BOARD_AVB_VBMETA_VENDOR := vendor odm
+BOARD_AVB_VBMETA_VENDOR_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_VBMETA_VENDOR_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION := 4
+
+BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 0
+
+
+TW_DEVICE_VERSION := DOOGEE V20_20230530 - lopestom
