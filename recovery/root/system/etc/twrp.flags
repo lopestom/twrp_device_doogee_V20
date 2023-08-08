@@ -15,7 +15,7 @@
 /metadata             ext4    /dev/block/by-name/metadata         flags=backup=1;display="metadata"
 
 # Common partition
-/data            f2fs    /dev/block/by-name/userdata           fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized,keydirectory=/metadata/vold/metadata_encryption,fsverity
+/data            f2fs    /dev/block/by-name/userdata           flags=fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized,keydirectory=/metadata/vold/metadata_encryption,fsverity
 /boot            emmc    /dev/block/by-name/boot               flags=backup=1;display="Boot";flashimg=1;slotselect
 /dtbo            emmc    /dev/block/by-name/dtbo               flags=backup=1;display="Dtbo";flashimg=1;slotselect
 /mnt/vendor/persist         ext4    /dev/block/by-name/persist            flags=backup=1;display="Persist"
