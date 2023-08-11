@@ -85,14 +85,14 @@ jobs:
        PATH=~/bin:$PATH
        cd twrp
        export ALLOW_MISSING_DEPENDENCIES=true && source build/envsetup.sh &&lunch twrp_V20-eng && mka $TARGET -j$(nproc --all)
-       cp  out/target/product/V20/boot.img    out/target/product/V20/boot_TWRP_V20_A11.img
+       cp  out/target/product/V20/boot.img    out/target/product/V20/boot_TWRP_V20_A11_Enc.img
              
     - name: Release recovery image
       uses: softprops/action-gh-release@v1
       env:
        GITHUB_TOKEN: ${{ secrets.TEST }}
       with:
-       tag_name: Doogee_V20-20230609
+       tag_name: Doogee_V20-20230609-A11_Enc
        name: TWRP37x_11-A201A68B7
        files: | 
          twrp/out/target/product/V20/boot*.img
