@@ -3,7 +3,7 @@
 
 
 This device tree have encrypt/decrypt mode activated for test because boot.img has 40MB. 
-The tester only install `boot-V20-A11.img` test file to know if TWRP can start.
+The tester only install `boot_TWRP_V20_A11_Enc.img` test file to know if TWRP can start.
 
 ### Firmware version: DOOGEE-V20-EEA-Android11.0-20230530 - A201A68B7.DGE2.DOOGEE_EEA.HB.HDJ.VFAZPEAEY5VKPT.20230530.V3.03
 A201A68B7.DGE2.DOOGEE_EEA.HB.HDJ.VFAZPEAEY5VKPT.20230530.V3.03.zip
@@ -14,12 +14,12 @@ A201A68B7.DGE2.DOOGEE.HB.HDJ.VFAZPEAEY5VKPT.20230609.V3.03.zip
 ## Status
 - MT6833 - A11
   - Status: booted??
-  - [?] booted
+  - [X] booted
 
-   - boot-V20-A11.img => Working?? Not working?
-  - [?] Working
+   - boot_TWRP_V20_A11_Enc.img => Working?? Not working?
+  - [X] Working
 ------------------------------------
-     20230mdd => The tester confirm encrypt/decrypt working after 00 files tested.
+     20230mdd => The tester confirm encrypt/decrypt working after 03 files tested.
 ------------------------------------
 
 Specs: https://www.gsmarena.com/doogee_v20-11807.php
@@ -31,10 +31,9 @@ Specs: https://www.gsmarena.com/doogee_v20-11807.php
 <details><summary>TWRP Pictures - Click to open</summary>
 <p>
 
-![TWRP Logo](https://github.com/lopestom/)
-![Decryption](https://github.com/lopestom/)
-![Decrypted](https://github.com/lopestom/)
-![Backup Info](https://github.com/lopestom/)
+![Decryption](https://github.com/lopestom/twrp_device_doogee_V20/releases/download/Doogee_V20-20230609-A11_Enc/Screenshot_2023-08-13-09-22-01_resized.png)
+![Decrypted](https://github.com/lopestom/twrp_device_doogee_V20/releases/download/Doogee_V20-20230609-A11_Enc/Screenshot_2023-08-13-11-20-05_resized.png)
+
 </p>
 </details>
 
